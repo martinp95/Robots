@@ -1,6 +1,6 @@
 #include <Servo.h>
-#define botonTopeDerecha 5// Boton final derecha
-#define botonTopeIzquierda 6// Boton final izquierda
+#define botonTopeDerecha 6// Boton final derecha
+#define botonTopeIzquierda 5// Boton final izquierda
 
 Servo servo;
 
@@ -33,7 +33,7 @@ void setup() {
   pinMode(botonTopeDerecha, INPUT);
   pinMode(botonTopeIzquierda, INPUT);
 
-  topeDerecha = false;
+  //topeDerecha = false;
   tiempoTotal = calibrar();
 }
 
@@ -43,8 +43,10 @@ void loop() {
   if (Serial.available() > 0) {
     //Generar Array coordenadas
     generarArrayCoordenadas();
+    Serial.println("***********");
     //Iniciar movimiento carro a coordenadas.
     moverCarroCoordenadas();
+    Serial.println("***********");
   }
 }
 
@@ -57,6 +59,10 @@ void moverCarroCoordenadas() {
   while (coordenadas[i] != "") {
     int coordenadaX = coordenadas[i].substring(0, coordenadas[i].indexOf("-")).toInt() ;
     long tiempoEspera = coordenadas[i].substring(coordenadas[i].indexOf("-") + 1, coordenadas[i].length()).toInt();
+    Serial.print(coordenadaX);
+    Serial.print("-");
+    Serial.println(tiempoEspera);
+
     //mover el carro a la posicion y esperar.
     mover(coordenadaX, tiempoEspera);
     i++;
@@ -70,29 +76,18 @@ void moverCarroCoordenadas() {
 int mover(int coordenadaX, long tiempoEspera) {
   if (coordenadaX > coordenadaActual) {
     servo.write(DERECHA);
-    /*
-       Calculo el tiempo de espera como la division del tiempo como la division
-       entre el tiempo total del circuit partidopor el numero totalde coordenadas
-       y multiplicado por las coordenadas que se tiene que mover que es la
-       diferencia entre la coordenada a la que se quiere mover menos la
-       coordenada en la que se encuentra el carro.
-    */
     delay((tiempoTotal / 24 * (coordenadaX - coordenadaActual)));
     servo.write(PARADO);
     delay(tiempoEspera);
-    //Establezco la coordenada actual.
-    coordenadaActual = coordenadaX;
-
   } else if (coordenadaX < coordenadaActual) {
     servo.write(IZQUIERDA);
-    delay(tiempoTotal / 24 * coordenadaX);
+    delay(tiempoTotal / 24 * abs(coordenadaX - coordenadaActual));
     servo.write(PARADO);
     delay(tiempoEspera);
-    //Establezco la coordenada actual.
-    coordenadaActual = coordenadaX;
   }
-}
+  coordenadaActual = coordenadaX;
 
+}
 /*
    Metodo que parte un string de coordenadas con el formato X-tiempo
    leido por el serial por el separador ",".
@@ -100,10 +95,13 @@ int mover(int coordenadaX, long tiempoEspera) {
 */
 void generarArrayCoordenadas() {
   int i = 0;
+  String linea = "";
   do {
-    coordenadas[i] = Serial.readStringUntil(',');
+    linea = Serial.readStringUntil(',');
+    Serial.println(linea);
+    coordenadas[i] = linea;
     i++;
-  } while (Serial.read() != -1 || i > 23);
+  } while (linea != "" && i < 24);
 }
 
 /*
