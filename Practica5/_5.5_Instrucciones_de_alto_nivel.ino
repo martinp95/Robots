@@ -224,7 +224,7 @@ long calibrarEjeY() {
 */
 void moverCarroFinEjeY() {
   servoY.write(GIRO_HORARIO);
-  while (digitalRead(botonTopeDerecha) == HIGH) {
+  while (digitalRead(botonTopeArriba) == HIGH) {
     topeArriba = false;
   }
   topeArriba = true;
@@ -235,7 +235,7 @@ void moverCarroFinEjeY() {
 */
 void moverCarroInicioEjeY() {
   servoY.write(GIRO_ANTI_HORARIO);
-  while (digitalRead(botonTopeIzquierda) == HIGH) {
+  while (digitalRead(botonTopeAbajo) == HIGH) {
     topeAbajo = false;
   }
   topeAbajo = true;
@@ -247,7 +247,7 @@ void moverCarroInicioEjeY() {
 */
 void moverCarroFinEjeX() {
   servoX.write(GIRO_HORARIO);
-  while (digitalRead(botonTopeDerecha) == HIGH) {
+  while (digitalRead(botonTopeIzquierda) == HIGH) {
     topeDerecha = false;
   }
   topeDerecha = true;
@@ -258,7 +258,7 @@ void moverCarroFinEjeX() {
 */
 void moverCarroInicioEjeX() {
   servoX.write(GIRO_ANTI_HORARIO);
-  while (digitalRead(botonTopeIzquierda) == HIGH) {
+  while (digitalRead(botonTopeDerecha) == HIGH) {
     topeIzquierda = false;
   }
   topeIzquierda = true;
