@@ -8,8 +8,8 @@
 #define pinPinza 11
 
 // Grados pinza, MAX y MIN admitido
-#define GMAX 110
-#define GMIN 10
+#define GMAX 5
+#define GMIN 94
 
 Servo servoX, servoY, pinza;
 
@@ -155,7 +155,7 @@ void moverY(int coordenadaY) {
 /*
    Abre la pinza los grados son conocidos por el robot
 */
-void apinza() {
+void cpinza() {
   while (gradosPinza < GMAX) {
     gradosPinza += 1;
     pinza.write(gradosPinza);
@@ -165,7 +165,7 @@ void apinza() {
 /*
    Cierra la pinza, los grados son conocidos por el robot(tiene que ser lo suficiente como para coger un cubo)
 */
-void cpinza() {
+void apinza() {
   while (gradosPinza > GMIN) {
     gradosPinza = gradosPinza - 1;
     pinza.write(gradosPinza);
