@@ -8,8 +8,8 @@
 #define pinPinza 11
 
 // Grados pinza, MAX y MIN admitido
-#define GMAX 50
-#define GMIN 23
+#define GMAX 90
+#define GMIN 0
 
 Servo servoX, servoY, pinza;
 
