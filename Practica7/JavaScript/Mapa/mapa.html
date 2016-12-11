@@ -1,0 +1,93 @@
+<html>
+  <head><title>OpenLayers Marker Popups</title></head>
+  <body>
+  <div id="mapdiv"></div>
+  <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+  <script src="http://www.openlayers.org/api/OpenLayers.js"></script>
+  <script>
+    map = new OpenLayers.Map("mapdiv");
+    map.addLayer(new OpenLayers.Layer.OSM());
+    
+    epsg4326 =  new OpenLayers.Projection("EPSG:4326"); //WGS 1984 projection
+    projectTo = map.getProjectionObject(); //The map projection (Spherical Mercator)
+   
+    var lonLat = new OpenLayers.LonLat(  -5.851332, 43.354730  ).transform(epsg4326, projectTo);
+    var zoom=14;
+    map.setCenter (lonLat, zoom);
+
+    var vectorLayer = new OpenLayers.Layer.Vector("Overlay");
+    
+    // Definir marcador
+    var feature = new OpenLayers.Feature.Vector(
+            new OpenLayers.Geometry.Point( -5.851332, 43.354730 ).transform(epsg4326, projectTo),
+            {description:'Sensor EUITO'} ,
+            {externalGraphic: 'mimarcador.png', graphicHeight: 50, graphicWidth: 50  }
+        );    
+    vectorLayer.addFeatures(feature);
+    map.addLayer(vectorLayer);
+ 
+    // Controles del mapa
+    var controls = {
+      selector: new OpenLayers.Control.SelectFeature(vectorLayer, { onSelect: createPopup, onUnselect: destroyPopup })
+    };
+
+	// Crear popup
+    function createPopup(feature) {
+      feature.popup = new OpenLayers.Popup.FramedCloud("pop",
+          feature.geometry.getBounds().getCenterLonLat(),
+          null,
+          '<div class="markerContent">' + feature.attributes.description +
+		  '<p id="datosSensor">Temp:xx.xx Humedad:xx.xx <br/>ledEncendido:?? </p> <button onclick="encenderLed()">Cambiar led</button></div>'
+		  ,
+          null,
+          true,
+          function() { controls['selector'].unselectAll(); }
+      );
+      //feature.popup.closeOnMove = true;
+      map.addPopup(feature.popup);
+    }
+
+	function encenderLed(){
+		var URLdispositivo = "http://192.168.0.100/led?tiempo="+new Date().getTime(); 
+		
+		$.get( URLdispositivo, {
+						
+		}).done(function( data ) {
+			alert(data);
+		});
+	}
+	
+	function peticionGet(){
+			var URLdispositivo = "http://192.168.0.100/sensor?tiempo="+new Date().getTime(); 
+		$.get( URLdispositivo, {
+						
+		}).done(function( data ) {
+			var res = data.split("@");
+			
+			if(res.length == 2){
+				alert(res[0]);
+				$("#datosSensor").text(res[1]);
+			}else{
+				$("#datosSensor").text(data);
+			}	
+			
+		});
+	}
+	
+	setInterval(function(){	
+		   peticionGet();
+		}, 10000);
+	
+	// cerrar popup
+    function destroyPopup(feature) {
+      feature.popup.destroy();
+      feature.popup = null;
+    }
+    
+    map.addControl(controls['selector']);
+    controls['selector'].activate();
+      
+  </script>
+  
+</body></html>
+    

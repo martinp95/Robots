@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<canvas id="myCanvas" width="698" height="505" >
+Your browser does not support the HTML5 canvas tag.
+</canvas>
+
+<script>
+var estados = [1,0,0,1]; // Estados : 1 = Abierto , 0 Cerrado
+var mediciones = [20,12,13,45];
+
+var rojo = "#FF0000";
+var verde = "#80FF00";
+var canvas = document.getElementById("myCanvas");
+
+
+// Esta función se ejecuta cada 1000 milisegundos
+setInterval(function(){	
+   for(i=0; i < 4; i++){
+		// Aleatoriamente cambio las mediciones
+		mediciones[i] = Math.floor((Math.random() * 40));
+		// Aleatoriamente cambio los estados
+		estados[i] = Math.floor((Math.random() * 2));
+   }
+   
+   actualizarCanvas();
+}, 1000);
+
+
+function actualizarCanvas(){
+	var ctx = canvas.getContext("2d");
+
+	// Mapa
+	var img = new Image();
+
+	img.onload = function () {
+		ctx.drawImage(img, 0, 0);
+		
+		// Ejeplo, 4 Marcadores
+		dibujaMarcador(ctx, 60,40,estados[0], mediciones[0]); // 1 en la x60 y40
+		dibujaMarcador(ctx, 260,40,estados[1], mediciones[1] ); // 2 en la x260 y40
+		dibujaMarcador(ctx, 250,420,estados[2], mediciones[2] ); // 2 en la x260 y40
+		dibujaMarcador(ctx, 450,320,estados[3], mediciones[3] ); // 2 en la x260 y40
+	}
+	// Mapa
+	img.src = "mimapa.png";
+}
+
+function dibujaMarcador(ctx, x, y,estado, medicion) {
+	if (estado < 1)
+		ctx.fillStyle = verde;
+	else
+		ctx.fillStyle = rojo;
+	
+	// Marcador
+	ctx.fillRect(x,y,30,30);
+	
+	// Texto
+	ctx.font = "30px Comic Sans MS";
+	ctx.fillText(medicion, x + 40, y + 25); 
+}
+
+// Eventos click
+canvas.onmousedown = function(e){
+    alert("Click, x:"+e.x+"    y:"+e.y);
+}
+
+</script>
+
+</body>
+</html>
