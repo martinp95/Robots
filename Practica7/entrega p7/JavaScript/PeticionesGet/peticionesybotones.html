@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="https://code.jquery.com/jquery-1.10.2.js"></script>
+<script>
+
+$(document).ready(function(){
+    $("#botonHacerPeticion").click(function(){
+		peticionGet();
+    });
+    $("#botonLed").click(function(){
+		var URLdispositivo = "http://192.168.0.100/led?tiempo="+new Date().getTime(); 
+		$.get( URLdispositivo, {
+		
+		}).done(function( data ) {
+			$("#resultado").text(data);
+			
+		});
+    });
+	$("#botonAutomatico").click(function(){
+		setInterval(function(){	
+		   peticionGet();
+		}, 5000);
+		
+    });
+	function peticionGet(){
+		// var URLdispositivo = "http://rest-service.guides.spring.io/greeting";
+		var URLdispositivo = "http://192.168.0.100/sensor?tiempo="+new Date().getTime(); 
+		//alert("enviando");
+		// Hacerlo desde el INTERNET EXPLORER
+		// Otros navegadores cancelan las peticiones a su propio dominio (por seguridad)
+		// Chrome : chrome.exe --disable-web-security , 
+		$.get( URLdispositivo, {
+			apagar : ""
+			
+		}).done(function( data ) {
+			$("#resultado").text(data);
+			//alert("RECIBIDO");
+		});
+	}
+});
+
+</script>
+</head>
+<body>
+
+<p id="botonHacerPeticion">Una Petición HTTP</p>
+<p id="botonLed">LED</p>
+<p id="botonAutomatico">Automatico</p>
+
+<p id="resultado">...</p>
+
+</body>
+</html>
